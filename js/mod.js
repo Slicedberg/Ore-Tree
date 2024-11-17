@@ -1,19 +1,19 @@
 let modInfo = {
-	name: "The ??? Tree",
-	author: "nobody",
+	name: "The Ore Tree",
+	author: "Slicedberg",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	offlineLimit: 24,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
 	num: "0.0",
-	name: "Literally nothing",
+	name: "InDev",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -40,8 +40,16 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
-
 	let gain = new Decimal(1)
+	if (hasUpgrade('stone', 14)) gain = gain.add(1)
+	if (hasUpgrade('stone', 24)) gain = gain.add(3)
+	if (hasUpgrade('stone', 11)) gain = gain.times(2)
+	if (hasUpgrade('stone', 12)) gain = gain.times(3)
+	if (hasUpgrade('stone', 13)) gain = gain.times(upgradeEffect('stone', 13))
+	if (hasUpgrade('stone', 15)) gain = gain.times(upgradeEffect('stone', 15))
+	if (hasUpgrade('stone', 21)) gain = gain.times(upgradeEffect('stone', 21))
+	if (hasUpgrade('stone', 22)) gain = gain.times(4)
+	gain = gain.times(buyableEffect('stone',11))
 	return gain
 }
 
