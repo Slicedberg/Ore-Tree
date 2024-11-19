@@ -26,10 +26,12 @@ addLayer("stone", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+
     tabFormat: {
         "Upgrades": {
             content: ["main-display", "prestige-button", "blank", "upgrades"]
         },
+        
         "Buyables": {
             content: ["main-display", "prestige-button", "blank", "buyables"]
         },
@@ -50,13 +52,13 @@ addLayer("stone", {
             title: "Stone-Point Catalyst",
             description: "Boost your point gain based on stone.",
             effect() {
-                if (hasUpgrade('stone', 23)) return player[this.layer].points.add(1).pow(0.40);
+                if (hasUpgrade('stone', 23)) return player[this.layer].points.add(1).pow(0.45);
                 return player[this.layer].points.add(1).pow(0.3);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
             cost: new Decimal(8),
             tooltip() {
-                if (hasUpgrade('stone', 23)) return "The Catalyst is at 40% efficiency.";
+                if (hasUpgrade('stone', 23)) return "The Catalyst is at 45% efficiency.";
                 return "The Catalyst is at 30% efficiency.";
             },
             unlocked() { return hasUpgrade('stone', 12); },
@@ -81,41 +83,41 @@ addLayer("stone", {
             title: "Exponential Points",
             description: "Boost points by themselves.",
             effect() {
-                return player.points.add(1).pow(0.1);
+                return player.points.add(1).pow(0.15);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
-            cost: new Decimal(160),
+            cost: new Decimal(140),
 
             unlocked() { return hasUpgrade('stone', 15); },
         },
         22: {
             title: "Stone Quadrupler",
             description: "Quadruple your point gain.",
-            cost: new Decimal(400),
+            cost: new Decimal(300),
             unlocked() { return hasUpgrade('stone', 21); },
         },
         23: {
             title: "Reinforced Catalyst",
-            description: "Increase the catalyst's efficiency by 10%.",
-            cost: new Decimal(1000),
+            description: "Increase the catalyst's efficiency by 15%.",
+            cost: new Decimal(800),
             unlocked() { return hasUpgrade('stone', 22); },
         },
         24: {
             title: "Reinforced Foundation",
             description: "Add 3 to base point gain (5 total).",
-            cost: new Decimal(4500),
+            cost: new Decimal(2500),
             unlocked() { return hasUpgrade('stone', 23); },
         },
         25: {
             title: "New Frontiers",
             description: "Unlock Stone Buyables.",
-            cost: new Decimal(12000),
+            cost: new Decimal(6000),
             unlocked() { return hasUpgrade('stone', 24); },
         },
         31: {
             title: "Finally, Buffing Stone!",
             description: "Triple stone gain.",
-            cost: new Decimal(12000),
+            cost: new Decimal(10000),
             unlocked() { return hasUpgrade('stone', 25); },
         },
     },
@@ -123,14 +125,14 @@ addLayer("stone", {
         11: {
             title: "Point Amplifier",
             cost(x) { 
-                return new Decimal(1000).mul(x).pow(1.15);
+                return new Decimal(x).mul(4).pow(1.5).mul(x);
             },
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                let multiplier = new Decimal(1.5).pow(amount);
+                let multiplier = new Decimal(1.25).pow(amount).pow(0.5);
                 return `Multiply your point gain by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
-                Amoubt: ${getBuyableAmount(this.layer, this.id)}`;
+                Amount: ${getBuyableAmount(this.layer, this.id)}`;
             },
             canAfford() { 
                 return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id).add(1))); 
@@ -142,10 +144,10 @@ addLayer("stone", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                return new Decimal(2).pow(amount);
+                return new Decimal(1.25).pow(amount).pow(0.5);
             },
             unlocked() {
-                return hasUpgrade(this.layer, 12);
+                return hasUpgrade(this.layer, 25);
             }
         }
     },
