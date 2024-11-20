@@ -7,7 +7,7 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
-	offlineLimit: 24,  // In hours
+	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
@@ -49,6 +49,7 @@ function getPointGen() {
 	if (hasUpgrade('stone', 15)) gain = gain.times(upgradeEffect('stone', 15))
 	if (hasUpgrade('stone', 21)) gain = gain.times(upgradeEffect('stone', 21))
 	if (hasUpgrade('stone', 22)) gain = gain.times(4)
+	if (hasUpgrade('stone', 32)) gain = gain.times(2)
 	gain = gain.times(buyableEffect('stone', 11))
 	return gain
 }

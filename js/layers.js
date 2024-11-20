@@ -17,6 +17,8 @@ addLayer("stone", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('stone', 31)) mult = mult.times(3)
+        if (hasUpgrade('stone', 32)) mult = mult.times(2)
+        mult = mult.times(buyableEffect('stone', 12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -24,26 +26,26 @@ addLayer("stone", {
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "s", description: "S: Reset for stone", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-
     tabFormat: {
-        "Upgrades": {
+        "Main": {
             content: ["main-display", "prestige-button", "blank", "upgrades"]
         },
         
         "Buyables": {
-            content: ["main-display", "prestige-button", "blank", "buyables"]
+            content: ["main-display", "prestige-button", "blank", "buyables"],
+            unlocked() {return hasUpgrade('stone', 25)},
         },
     },
     upgrades: {
         11: {
-            title: "Stone Doubler",
+            title: "Point Doubler",
             description: "Double your point gain.",
             cost: new Decimal(1),
         },
         12: {
-            title: "Stone Tripler",
+            title: "Point Tripler",
             description: "Triple your point gain.",
             cost: new Decimal(3),
             unlocked() { return hasUpgrade('stone', 11); },
@@ -91,7 +93,7 @@ addLayer("stone", {
             unlocked() { return hasUpgrade('stone', 15); },
         },
         22: {
-            title: "Stone Quadrupler",
+            title: "Point Quadrupler",
             description: "Quadruple your point gain.",
             cost: new Decimal(300),
             unlocked() { return hasUpgrade('stone', 21); },
@@ -110,26 +112,55 @@ addLayer("stone", {
         },
         25: {
             title: "New Frontiers",
-            description: "Unlock Stone Buyables.",
+            description: "Unlock the Buyables tab.",
             cost: new Decimal(6000),
             unlocked() { return hasUpgrade('stone', 24); },
         },
         31: {
-            title: "Finally, Buffing Stone!",
+            title: "Finally, Boosting Stone!",
             description: "Triple stone gain.",
-            cost: new Decimal(10000),
+            cost: new Decimal(80000),
             unlocked() { return hasUpgrade('stone', 25); },
         },
+        32: {
+            title: "Double Trouble",
+            description: "Double stone and point gain.",
+            cost: new Decimal(750000),
+            unlocked() { return hasUpgrade('stone', 31); },
+        },
+        33: {
+            title: "Anotha One",
+            description: "Unlock another buyable.",
+            cost: new Decimal(10000000),
+            unlocked() { return hasUpgrade('stone', 32); },
+        },
+        34: {
+            title: "Reinforced Amplifiers",
+            description: "Make buyables slightly stronger.",
+            cost: new Decimal(1e9),
+            unlocked() { return hasUpgrade('stone', 33); },
+        },
+        35: {
+            title: "Affordable Amplifiers",
+            description: "Make buyables slightly cheaper.",
+            cost: new Decimal(1e11),
+            unlocked() { return hasUpgrade('stone', 34); },
+        },
+
+
+        // planned upgrades: stone quintupler, reinforced processor
     },
     buyables: {
         11: {
             title: "Point Amplifier",
             cost(x) { 
-                return new Decimal(x).mul(4).pow(1.5).mul(x);
+                if (hasUpgrade('stone', 35)) return new Decimal(1.5).pow(x).mul(25);
+                else return new Decimal(1.5).pow(x).mul(250);
             },
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                let multiplier = new Decimal(1.25).pow(amount).pow(0.5);
+                let multiplier = new Decimal(1.25).pow(amount)
+                if (hasUpgrade('stone', 34)) multiplier = new Decimal(1.275).pow(amount);
                 return `Multiply your point gain by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
                 Amount: ${getBuyableAmount(this.layer, this.id)}`;
@@ -144,10 +175,42 @@ addLayer("stone", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                return new Decimal(1.25).pow(amount).pow(0.5);
+                if (hasUpgrade('stone', 34)) return new Decimal(1.275).pow(amount);
+                else return new Decimal(1.25).pow(amount);
             },
             unlocked() {
                 return hasUpgrade(this.layer, 25);
+            }
+        },
+        12: {
+            title: "Stone Amplifier",
+            cost(x) { 
+                if (hasUpgrade('stone', 35)) return new Decimal(1.75).pow(x).mul(2500);
+                return new Decimal(1.75).pow(x).mul(25000);
+            },
+            display() {
+                let amount = getBuyableAmount(this.layer, this.id);
+                let multiplier = new Decimal(1.15).pow(amount);
+                if (hasUpgrade('stone', 34)) multiplier = new Decimal(1.19).pow(amount);
+                return `Multiply your stone gain by ${format(multiplier)}.
+                Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
+                Amount: ${getBuyableAmount(this.layer, this.id)}`;
+            },
+            canAfford() { 
+                return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id).add(1))); 
+            },
+            buy() {
+                let cost = this.cost(getBuyableAmount(this.layer, this.id).add(1));
+                player[this.layer].points = player[this.layer].points.sub(cost);
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+            effect() {
+                let amount = getBuyableAmount(this.layer, this.id);
+                if (hasUpgrade('stone', 34)) return new Decimal(1.19).pow(amount);
+                else return new Decimal(1.15).pow(amount);
+            },
+            unlocked() {
+                return hasUpgrade(this.layer, 33);
             }
         }
     },
