@@ -50,6 +50,7 @@ function getPointGen() {
 	if (hasUpgrade('stone', 21)) gain = gain.times(upgradeEffect('stone', 21))
 	if (hasUpgrade('stone', 22)) gain = gain.times(4)
 	if (hasUpgrade('stone', 32)) gain = gain.times(2)
+	if (hasUpgrade('stone', 42)) gain = gain.times(5)
 	gain = gain.times(buyableEffect('stone', 11))
 	return gain
 }

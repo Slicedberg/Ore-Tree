@@ -6,7 +6,7 @@ addLayer("stone", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#666666",
+    color: "#777777",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "stone", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
@@ -18,6 +18,7 @@ addLayer("stone", {
         mult = new Decimal(1)
         if (hasUpgrade('stone', 31)) mult = mult.times(3)
         if (hasUpgrade('stone', 32)) mult = mult.times(2)
+        if (hasUpgrade('stone', 43)) mult = mult.times(upgradeEffect('stone', 43))
         mult = mult.times(buyableEffect('stone', 12))
         return mult
     },
@@ -75,12 +76,20 @@ addLayer("stone", {
             title: "Upgrade Processor",
             description: "Multiply point gain by stone upgrades purchased.",
             effect() {
-                return player[this.layer].upgrades.length;
+                let baseEffect = player[this.layer].upgrades.length;
+                if (hasUpgrade('stone', 44)) {
+                    return new Decimal(baseEffect).pow(2);
+                }
+                return new Decimal(baseEffect);
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
+            effectDisplay() { 
+                return format(upgradeEffect(this.layer, this.id)) + "x"; 
+            },
             cost: new Decimal(50),
-            unlocked() { return hasUpgrade('stone', 14); },
-        },
+            unlocked() { 
+                return hasUpgrade('stone', 14); 
+            },
+        },        
         21: {
             title: "Exponential Points",
             description: "Boost points by themselves.",
@@ -119,7 +128,7 @@ addLayer("stone", {
         31: {
             title: "Finally, Boosting Stone!",
             description: "Triple stone gain.",
-            cost: new Decimal(80000),
+            cost: new Decimal(50000),
             unlocked() { return hasUpgrade('stone', 25); },
         },
         32: {
@@ -136,37 +145,76 @@ addLayer("stone", {
         },
         34: {
             title: "Reinforced Amplifiers",
-            description: "Make buyables slightly stronger.",
+            description: "Make buyables stronger.",
             cost: new Decimal(1e9),
             unlocked() { return hasUpgrade('stone', 33); },
         },
         35: {
             title: "Affordable Amplifiers",
-            description: "Make buyables slightly cheaper.",
+            description: "Make buyables cheaper.",
             cost: new Decimal(1e11),
             unlocked() { return hasUpgrade('stone', 34); },
         },
-
-
-        // planned upgrades: stone quintupler, reinforced processor
+        41: {
+            title: "Wacky Warehouses",
+            description: "Unlock another buyable.",
+            cost: new Decimal(2.5e16),
+            unlocked() { return hasUpgrade('stone', 35); },
+        },
+        42: {
+            title: "Point Quintupler",
+            description: "Quintuple your point gain.",
+            cost: new Decimal(1e21),
+            unlocked() { return hasUpgrade('stone', 41); },
+        },
+        43: {
+            title: "Point-Stone Catalyst",
+            description: "Boost your stone gain based on points.",
+            effect() {
+                return player.points.add(1).pow(0.05);
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
+            cost: new Decimal(1e23),
+            tooltip() {
+                return "The Catalyst is at 50% efficiency.";
+            },
+            unlocked() { return hasUpgrade('stone', 42); },
+        },
+        44: {
+            title: "Reinforced Processor",
+            description: "The upgrade processor's effect is squared.",
+            cost: new Decimal(1e31),
+            unlocked() { return hasUpgrade('stone', 43); },
+        },
+        45: {
+            title: "In The Name",
+            description: "Finally unlock your first ore: Coal.",
+            cost: new Decimal(1e35),
+            unlocked() { return hasUpgrade('stone', 44); },
+        },
     },
     buyables: {
         11: {
             title: "Point Amplifier",
             cost(x) { 
-                if (hasUpgrade('stone', 35)) return new Decimal(1.5).pow(x).mul(25);
+                if (hasUpgrade('stone', 35)) return new Decimal(1.5).pow(x).mul(12.5);
                 else return new Decimal(1.5).pow(x).mul(250);
             },
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                let multiplier = new Decimal(1.25).pow(amount)
+                let multiplier = new Decimal(1.25).pow(amount);
                 if (hasUpgrade('stone', 34)) multiplier = new Decimal(1.275).pow(amount);
+                
+                // Dynamically calculate the purchase limit based on warehouses
+                let maxLimit = new Decimal(75).add(buyableEffect('stone', 13));
                 return `Multiply your point gain by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
-                Amount: ${getBuyableAmount(this.layer, this.id)}`;
+                Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
             },
             canAfford() { 
-                return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id).add(1))); 
+                let maxLimit = new Decimal(75).add(buyableEffect('stone', 13)); // Dynamic limit
+                return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id).add(1))) 
+                    && getBuyableAmount(this.layer, this.id).lt(maxLimit);
             },
             buy() {
                 let cost = this.cost(getBuyableAmount(this.layer, this.id).add(1));
@@ -185,14 +233,48 @@ addLayer("stone", {
         12: {
             title: "Stone Amplifier",
             cost(x) { 
-                if (hasUpgrade('stone', 35)) return new Decimal(1.75).pow(x).mul(2500);
+                if (hasUpgrade('stone', 35)) return new Decimal(1.75).pow(x).mul(1250);
                 return new Decimal(1.75).pow(x).mul(25000);
             },
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
                 let multiplier = new Decimal(1.15).pow(amount);
                 if (hasUpgrade('stone', 34)) multiplier = new Decimal(1.19).pow(amount);
+                
+                // Dynamically calculate the purchase limit based on warehouses
+                let maxLimit = new Decimal(50).add(buyableEffect('stone', 13));
                 return `Multiply your stone gain by ${format(multiplier)}.
+                Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
+                Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
+            },
+            canAfford() { 
+                let maxLimit = new Decimal(50).add(buyableEffect('stone', 13)); // Dynamic limit
+                return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id).add(1))) 
+                    && getBuyableAmount(this.layer, this.id).lt(maxLimit);
+            },
+            buy() {
+                let cost = this.cost(getBuyableAmount(this.layer, this.id).add(1));
+                player[this.layer].points = player[this.layer].points.sub(cost);
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+            effect() {
+                let amount = getBuyableAmount(this.layer, this.id);
+                if (hasUpgrade('stone', 34)) return new Decimal(1.19).pow(amount);
+                else return new Decimal(1.15).pow(amount);
+            },
+            unlocked() {
+                return hasUpgrade('stone', 32);
+            },
+        },        
+        13: {
+            title: "Warehouses",
+            cost(x) { 
+                return new Decimal(1.9).pow(x).mul(5e13);
+            },
+            display() {
+                let amount = getBuyableAmount(this.layer, this.id);
+                let multiplier = new Decimal(1).mul(amount);
+                return `Purchase a warehouse to store more amplifiers. Increases amplifier limit by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
                 Amount: ${getBuyableAmount(this.layer, this.id)}`;
             },
@@ -206,13 +288,50 @@ addLayer("stone", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                if (hasUpgrade('stone', 34)) return new Decimal(1.19).pow(amount);
-                else return new Decimal(1.15).pow(amount);
+                return amount;
             },
             unlocked() {
-                return hasUpgrade(this.layer, 33);
+                return hasUpgrade(this.layer, 41);
             }
-        }
+        },
+    },
+    layerShown(){return true}
+})
+addLayer("coal", {
+    name: "coal", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "C", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#444444",
+    requires: new Decimal(1e46), // Can be a function that takes requirement increases into account
+    resource: "coal", // Name of prestige currency
+    baseResource: "stone", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    spcateff: 0.4,
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() {
+        return new Decimal(1)
+    },
+    row: 1,
+    hotkeys: [
+        {key: "c", description: "C: Reset for coal", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    tabFormat: {
+        "Main": {
+            content: ["main-display", "prestige-button", "blank", "upgrades"]
+        },
+        
+        "Buyables": {
+            content: ["main-display", "prestige-button", "blank", "buyables"],
+        },
     },
     layerShown(){return true}
 })
