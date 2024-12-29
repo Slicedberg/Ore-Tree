@@ -40,18 +40,22 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
-	let gain = new Decimal(1)
+	let gain = new Decimal(100000)
 	if (hasUpgrade('stone', 14)) gain = gain.add(1)
 	if (hasUpgrade('stone', 24)) gain = gain.add(3)
+	gain = gain.add(buyableEffect('stone', 22)).mul(100000)
 	if (hasUpgrade('stone', 11)) gain = gain.times(2)
 	if (hasUpgrade('stone', 12)) gain = gain.times(3)
 	if (hasUpgrade('stone', 13)) gain = gain.times(upgradeEffect('stone', 13))
 	if (hasUpgrade('stone', 15)) gain = gain.times(upgradeEffect('stone', 15))
-	if (hasUpgrade('stone', 21)) gain = gain.times(upgradeEffect('stone', 21))
-	if (hasUpgrade('stone', 22)) gain = gain.times(4)
-	if (hasUpgrade('stone', 32)) gain = gain.times(2)
-	if (hasUpgrade('stone', 42)) gain = gain.times(5)
+	if (hasUpgrade('stone', 21)) gain = gain.times(4)
+	if (hasUpgrade('stone', 22)) gain = gain.times(upgradeEffect('stone', 22))
 	gain = gain.times(buyableEffect('stone', 11))
+	if (hasUpgrade('stone', 31)) gain = gain.times(5)
+	if (hasUpgrade('stone', 33)) gain = gain.times(2)
+	if (hasUpgrade('coal', 11)) gain = gain.times(6)
+	if (hasUpgrade('coal', 12)) gain = gain.times(3)
+	gain = gain.times(buyableEffect('refinery', 11))
 	return gain
 }
 
