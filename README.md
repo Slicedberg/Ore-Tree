@@ -1,7 +1,6 @@
-# The-Modding-Tree
+# The Ore Tree
 
-An incremental game engine based on The Prestige Tree. It still requires programming knowledge, but it's mostly pretty easy things and copy/pasting.
+An incremental game made using The-Modding-Tree, an incremental game engine. The game currently is currently being developed and has not officially released, but is playable. Note that even after release, i will add new content through updates.
 
-[Look here for a tutorial on getting started with modding with TMT](docs/tutorials/getting-started.md)
 
-You can look in the [documentation](docs/!general-info.md) for more information on how it all works, or look at the code in [layers.js](js/layers.js) to see what it all looks like.
+If you'd like to make your own game using the modding tree, [Look here for a tutorial on getting started with modding with TMT](docs/tutorials/getting-started.md)
