@@ -12,14 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "0.01X",
 	name: "InDev",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+		- I'm not writing a changelog for indev.<br>
+		- Game has 3 layers, currently unbalanced.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -40,10 +40,10 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
-	let gain = new Decimal(100000)
+	let gain = new Decimal(1)
 	if (hasUpgrade('stone', 14)) gain = gain.add(1)
 	if (hasUpgrade('stone', 24)) gain = gain.add(3)
-	gain = gain.add(buyableEffect('stone', 22)).mul(100000)
+	gain = gain.add(buyableEffect('stone', 22))
 	if (hasUpgrade('stone', 11)) gain = gain.times(2)
 	if (hasUpgrade('stone', 12)) gain = gain.times(3)
 	if (hasUpgrade('stone', 13)) gain = gain.times(upgradeEffect('stone', 13))
@@ -55,7 +55,15 @@ function getPointGen() {
 	if (hasUpgrade('stone', 33)) gain = gain.times(2)
 	if (hasUpgrade('coal', 11)) gain = gain.times(6)
 	if (hasUpgrade('coal', 12)) gain = gain.times(3)
+	if (hasUpgrade('coal', 15)) gain = gain.times(upgradeEffect('coal', 15))
+	if (hasUpgrade('refinery', 11)) gain = gain.times(2)
+	if (hasUpgrade('stone', 55)) gain = gain.times(upgradeEffect('stone', 55))
 	gain = gain.times(buyableEffect('refinery', 11))
+	if (hasUpgrade('coal', 21) && !hasUpgrade("coal", 34)) gain = gain.times(0.5)
+	if (hasUpgrade('coal', 22)) gain = gain.times(3)
+	if (hasUpgrade('coal', 23)) gain = gain.times(3)
+	if (hasUpgrade('coal', 24)) gain = gain.times(3)
+	if (hasUpgrade('coal', 33)) gain = gain.times(4)
 	return gain
 }
 
@@ -69,7 +77,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return hasUpgrade("coal", 35)
 }
 
 
