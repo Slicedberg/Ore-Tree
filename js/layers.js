@@ -19,9 +19,11 @@ addLayer("stone", {
         if (hasUpgrade('stone', 33)) mult = mult.times(2)
         if (hasUpgrade('stone', 43)) mult = mult.times(upgradeEffect('stone', 43))
         if (hasUpgrade('coal', 12)) mult = mult.times(3)
+        if (hasUpgrade('stone', 52)) mult = mult.times(upgradeEffect('stone', 52))
         if (hasUpgrade('stone', 53)) mult = mult.times(upgradeEffect('stone', 53))
         mult = mult.times(buyableEffect('stone', 12))
         mult = mult.times(buyableEffect('refinery', 12))
+
         if (hasUpgrade('refinery', 11)) mult = mult.times(2)
         if (hasUpgrade('stone', 55)) mult = mult.times(upgradeEffect('stone', 55))
         if (hasUpgrade('coal', 21)) mult = mult.times(3)
@@ -149,7 +151,7 @@ addLayer("stone", {
         33: {
             title: "Double Trouble",
             description: "Double stone and point gain.",
-            cost: new Decimal(2000000),
+            cost: new Decimal(3000000),
             unlocked() { return hasUpgrade('stone', 32); },
         },
         34: {
@@ -214,13 +216,13 @@ addLayer("stone", {
                 return player[this.layer].points.add(1).pow(0.035);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
-            cost: new Decimal(5e37),
+            cost: new Decimal(1e38),
             unlocked() { return hasUpgrade('stone', 51) && hasUpgrade('coal', 13); },
         },
         53: {
             title: "Process Stone",
             description: "Upgrade Processor boosts Stone at a reduced rate.",
-            cost: new Decimal(1e41),
+            cost: new Decimal(1e42),
             effect() {
                 let baseEffect = player[this.layer].upgrades.length;
                 return new Decimal(baseEffect).pow(1.3);
@@ -233,13 +235,13 @@ addLayer("stone", {
         54: {
             title: "Really Refined",
             description: "Unlock the Stone Refinery.",
-            cost: new Decimal(1e45),
+            cost: new Decimal(1e47),
             unlocked() { return hasUpgrade('stone', 53) && hasUpgrade('coal', 14); },
         },
         55: {
             title: "Refinement Trinity",
             description: "R.S boosts points, stone, and coal.",
-            cost: new Decimal(1e50),
+            cost: new Decimal(1e55),
             effect() {
                 return player.refinery.points.add(1).pow(0.5);
             },
@@ -371,7 +373,7 @@ addLayer("stone", {
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
                 let multiplier = new Decimal(3).times(amount);
-                if (hasUpgrade('coal', 14)) multiplier = new Decimal(4).times(amount);
+                if (hasUpgrade('coal', 14)) multiplier = new Decimal(5).times(amount);
                 let maxLimit = new Decimal(100)
                 return `Add ${format(multiplier)} to base point gain.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id).add(1)))} stone
@@ -389,11 +391,11 @@ addLayer("stone", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                if (hasUpgrade('coal', 14)) return amount.times(4)
+                if (hasUpgrade('coal', 14)) return amount.times(5)
                 return amount.times(3);
             },
             tooltip() {
-                if (hasUpgrade('coal', 14)) return ('Base Cost: 1e33 <br> Cost Scaling: 1.75 <br> Special Effect: +4/Amount')
+                if (hasUpgrade('coal', 14)) return ('Base Cost: 1e33 <br> Cost Scaling: 1.75 <br> Special Effect: +5/Amount')
                 return ('Base Cost: 1e33 <br> Cost Scaling: 1.75 <br> Special Effect: +3/Amount')
             },
             unlocked() {
@@ -407,7 +409,9 @@ addLayer("stone", {
                 layerDataReset("stone", (["upgrades", "buyables"]));
             } else if (hasUpgrade('coal', 25)) {
                 layerDataReset("stone", ["upgrades"]);
-            };
+            } else {
+                layerDataReset("stone")
+            }
         } 
     },
     layerShown(){return true}
@@ -480,8 +484,8 @@ addLayer("coal", {
         },
         14: {
             title: "Efficient Fortifications",
-            description: "Fortified Foundations now adds 4 to base point gain per purchase.",
-            cost: new Decimal(600),
+            description: "Fortified Foundations now adds 5 to base point gain per purchase.",
+            cost: new Decimal(750),
             unlocked() { return hasUpgrade('coal', 13); },
         },
         15: {
@@ -518,43 +522,43 @@ addLayer("coal", {
         24: {
             title: "Is It Worth It? IV",
             description: "Triple stone, point, and coal gain, but half R.S. gain.",
-            cost: new Decimal(5000000),
+            cost: new Decimal(10000000),
             unlocked() { return hasUpgrade('coal', 23); },
         },
         25: {
             title: "No More Clicking I",
             description: "Keep stone upgrades on coal resets.",
-            cost: new Decimal(25000000),
+            cost: new Decimal(75000000),
             unlocked() { return hasUpgrade('coal', 24); },
         },
         31: {
             title: "No More Clicking II",
             description: "Keep stone buyables on coal resets.",
-            cost: new Decimal(200000000),
+            cost: new Decimal(400000000),
             unlocked() { return hasUpgrade('coal', 25); },
         },
         32: {
             title: "No More Clicking III",
-            description: "Keep stone buyables on refinery resets.",
-            cost: new Decimal(1e9),
+            description: "Keep stone buyables on refinery resets and you can buy max R.S.",
+            cost: new Decimal(1.5e9),
             unlocked() { return hasUpgrade('coal', 31); },
         },
         33: {
             title: "There Isn't A 4th One",
             description: "Speaking of 4: Quadruple stone, point, and coal gain.",
-            cost: new Decimal(5e9),
+            cost: new Decimal(1e10),
             unlocked() { return hasUpgrade('coal', 32); },
         },
         34: {
             title: "Worth It All Along",
             description: "Remove the downsides of Is It Worth It? I-IV",
-            cost: new Decimal(1.5e10),
+            cost: new Decimal(2.5e11),
             unlocked() { return hasUpgrade('coal', 33); },
         },
         35: {
             title: "Two M-ore-s",
             description: "Unlock the next 2 ores: Copper and Iron. [CURRENT ENDGAME]",
-            cost: new Decimal(5e11),
+            cost: new Decimal(5e12),
             unlocked() { return hasUpgrade('coal', 34); },
         },
     },
@@ -569,7 +573,7 @@ addLayer("refinery", {
 		points: new Decimal(0),
     }},
     color: "#444444",
-    requires: new Decimal(1e45), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1e47), // Can be a function that takes requirement increases into account
     resource: "refined stone", // Name of prestige currency
     baseResource: "stone", // Name of resource prestige is based on
     baseAmount() {return player.stone.points}, // Get the current amount of baseResource
@@ -586,6 +590,7 @@ addLayer("refinery", {
         return new Decimal(1)
     },
     row: 0,
+    canBuyMax() {if (hasUpgrade('coal', 32)) return true},
     resetDescription: "Convert your stone to ",
     hotkeys: [
         {key: "r", description: "R: Refine your stone", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
