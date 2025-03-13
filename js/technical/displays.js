@@ -42,7 +42,6 @@ function achievementStyle(layer, id){
     if (ach.image){ 
         style.push({'background-image': 'url("' + ach.image + '")'})
     } 
-    if (!hasAchievement(layer, id)) style.push({'visibility': 'hidden'})
     style.push(ach.style)
     return style
 }

@@ -1,27 +1,26 @@
 let modInfo = {
-	name: "The ??? Tree",
-	author: "nobody",
+	name: "The Ore Tree",
+	author: "Slicedberg",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "INDEV",
+	name: "In Development",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>vINDEV</h3><br>
+		- Under development. <br>`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `TBD`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -40,8 +39,21 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
+	let gain = new Decimal(0.1)
+	if (hasUpgrade("stone", 13)) gain = gain.add(0.1)
+	if (hasUpgrade("stone", 24)) gain = gain.add(0.3)
+	if (hasUpgrade("stone", 34)) gain = gain.add(0.5)
 
-	let gain = new Decimal(1)
+	if (hasUpgrade("stone", 11)) gain = gain.times(1.5)
+	if (hasUpgrade("stone", 12)) gain = gain.times(2)
+	if (hasUpgrade("stone", 14)) gain = gain.times(upgradeEffect("stone", 14))
+	if (hasUpgrade("stone", 15)) gain = gain.times(upgradeEffect("stone", 15))
+	if (hasUpgrade("stone", 21)) gain = gain.times(upgradeEffect("stone", 21))
+	if (hasUpgrade("stone", 22)) gain = gain.times(3)
+	gain = gain.times(buyableEffect('stone', 11))
+	if (hasUpgrade("stone", 32)) gain = gain.times(4)
+	if (hasUpgrade("stone", 33)) gain = gain.times(2)
+	
 	return gain
 }
 
@@ -55,7 +67,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("e280000000")) // To be determined
 }
 
 
