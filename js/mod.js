@@ -40,6 +40,7 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 	let gain = new Decimal(0.1)
+	if (hasUpgrade("coal", 11)) gain = new Decimal(3)
 	if (hasUpgrade("stone", 13)) gain = gain.add(0.1)
 	if (hasUpgrade("stone", 24)) gain = gain.add(0.3)
 	if (hasUpgrade("stone", 34)) gain = gain.add(0.5)
@@ -53,7 +54,8 @@ function getPointGen() {
 	gain = gain.times(buyableEffect('stone', 11))
 	if (hasUpgrade("stone", 32)) gain = gain.times(4)
 	if (hasUpgrade("stone", 33)) gain = gain.times(2)
-	
+	if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) gain = gain.times(2)
+	if (hasUpgrade("coal", 12)) gain = gain.times(3)
 	return gain
 }
 
