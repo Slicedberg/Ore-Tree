@@ -44,6 +44,8 @@ function getPointGen() {
 	if (hasUpgrade("stone", 13)) gain = gain.add(0.1)
 	if (hasUpgrade("stone", 24)) gain = gain.add(0.3)
 	if (hasUpgrade("stone", 34)) gain = gain.add(0.5)
+	if (hasUpgrade("stone", 53)) gain = gain.add(12)
+	gain = gain.add(buyableEffect('stone', 22))
 
 	if (hasUpgrade("stone", 11)) gain = gain.times(1.5)
 	if (hasUpgrade("stone", 12)) gain = gain.times(2)
@@ -56,6 +58,7 @@ function getPointGen() {
 	if (hasUpgrade("stone", 33)) gain = gain.times(2)
 	if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) gain = gain.times(2)
 	if (hasUpgrade("coal", 12)) gain = gain.times(3)
+	if (hasUpgrade("coal", 14)) gain = gain.times(upgradeEffect("coal", 14))
 	return gain
 }
 
