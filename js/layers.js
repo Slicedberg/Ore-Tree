@@ -55,41 +55,34 @@ addLayer("a", {
             onComplete() {}
         },
         16: {
-            name: "Richest Person Alive",
-            done() {return player.points.gte(324000000000)},
-            unlocked() {return true},
-            tooltip: "Have more points than Elon Musk",
-            onComplete() {}
-        },
-        21: {
             name: "Not That Repeatable",
             done() {return getBuyableAmount("stone", 11).gte(60) & getBuyableAmount("stone", 12).gte(30);},
             unlocked() {return true},
             tooltip: "Max out the first 2 stone buyables",
             onComplete() {}
         },
-        22: {
+        21: {
             name: "Lose Everything",
             done() {return player.coal.points.gte(1)},
             unlocked() {return true},
             tooltip: "Reset for Coal",
             onComplete() {}
         },
-        23: {
+        22: {
             name: "Oops, I Did it Again",
             done() {return player.coal.points.gte(3)},
             unlocked() {return true},
             tooltip: "Reset for Coal a second time",
             onComplete() {}
         },
-        24: {
+        23: {
             name: "Welcome Back",
             done() {return hasUpgrade('stone', 51)},
             unlocked() {return true},
             tooltip: "I thought there weren't any more Stone upgrades!",
             onComplete() {}
         },
-        25: {
+        24: {
             name: "Buyable Grid",
             done() {return hasUpgrade('stone', 54)},
             unlocked() {return true},
@@ -124,7 +117,7 @@ addLayer("stone", {
         mult = mult.times(buyableEffect('stone', 12))
         if (hasUpgrade("stone", 43)) mult = mult.times(upgradeEffect("stone", 43))
         if (hasUpgrade("stone", 44)) mult = mult.times(upgradeEffect("stone", 15))
-        if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) mult = mult.times(2)
+        if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) mult = mult.times(2)
         if (hasUpgrade("coal", 12)) mult = mult.times(3)
         if (hasUpgrade("stone", 52)) mult = mult.times(upgradeEffect("stone", 52))
         if (hasUpgrade("coal", 15)) mult = mult.times(upgradeEffect("coal", 15))
@@ -195,7 +188,7 @@ addLayer("stone", {
             description: "Purchased stone upgrades boost point gain",
             effect() {
                 let baseEffect = player[this.layer].upgrades.length;
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) {
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {
                     return new Decimal(baseEffect).pow(0.9);
                 }
                 if (hasUpgrade('stone', 44)) {
@@ -298,7 +291,7 @@ addLayer("stone", {
             description: "Boost your stone gain based on points",
             effect() {
                 let baseEffect = player.points.add(1).pow(0.05)
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) {baseEffect = player.points.add(1).pow(0.08);}
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {baseEffect = player.points.add(1).pow(0.08);}
                 if (baseEffect.gte(50)) {
                     baseEffect = baseEffect.div(50).pow(0.25).mul(50);
                 }
@@ -308,11 +301,11 @@ addLayer("stone", {
             cost: new Decimal(5e10),
             tooltip() {
                 let baseEffect = player.points.add(1).pow(0.05)
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) {baseEffect = player.points.add(1).pow(0.08);}
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {baseEffect = player.points.add(1).pow(0.08);}
                 if (baseEffect.gte(50)) {
                     return "This Catalyst is softcapped, making effect progress past 50x raised to 0.25"
                 }
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) {return "This Catalyst is at 100% efficiency"}
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {return "This Catalyst is at 100% efficiency"}
                 return "This Catalyst is at 60% efficiency";
             },
             unlocked() { return hasUpgrade('stone', 42); },
@@ -326,17 +319,17 @@ addLayer("stone", {
         45: {
             title: "In The Name",
             description() {
-                return hasAchievement("a", 22) 
+                return hasAchievement("a", 21) 
                     ? "This upgrade now boosts various other upgrades and currencies" 
                     : "Unlock the first Ore, Coal";
             },
             cost: new Decimal(1e15),
-            tooltip(){if (hasAchievement("a", 22)) return "Upgrade Processor's Effect is Upgrades^0.9, Point-Stone Catalyst has 100% efficiency, and double point and stone gain"},
+            tooltip(){if (hasAchievement("a", 21)) return "Upgrade Processor's Effect is Upgrades^0.9, Point-Stone Catalyst has 100% efficiency, and double point and stone gain"},
             unlocked() { return hasUpgrade('stone', 44); },
         },
         51: {
             title: "Storage Expansion",
-            description: "Double max Warehouses and divide base cost by 5",
+            description: "Double max Warehouses and divide base cost by 8",
             effect(){
                 if (hasUpgrade("stone", 51)){return new Decimal(40)}
                 else return new Decimal(0)
@@ -355,7 +348,7 @@ addLayer("stone", {
                 return baseEffect;
             },            
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"},
-            cost: new Decimal(1.5e20),
+            cost: new Decimal(1e20),
             tooltip() {
                 let baseEffect = player.stone.points.add(1).pow(0.07)
                 if (baseEffect.gte(50)) return "This upgrade is softcapped, making effect progress past 50x raised to 0.25"
@@ -365,7 +358,7 @@ addLayer("stone", {
         53: {
             title: "Foreshadowing",
             description: "Add 12 to base point gain and 6 to base stone gain",
-            cost: new Decimal(2e24),
+            cost: new Decimal(2.3e23),
             unlocked() { return hasUpgrade('stone', 52) & hasUpgrade('coal', 13); },
         },
         54: {
@@ -375,13 +368,13 @@ addLayer("stone", {
                 if (hasUpgrade("stone", 54)){return new Decimal(5)}
                 else return new Decimal(0)
             },
-            cost: new Decimal(1e27),
+            cost: new Decimal(6e26),
             unlocked() { return hasUpgrade('stone', 53) & hasUpgrade('coal', 14); },
         },
         55: {
             title: "Bad Pun",
             description: "Unlock MileStones",
-            cost: new Decimal(2e24),
+            cost: new Decimal(1e30),
             unlocked() { return hasUpgrade('stone', 54) & hasUpgrade('coal', 15); },
         },
     },
@@ -469,7 +462,7 @@ addLayer("stone", {
         21: {
             title: "Warehouses",
             cost(x) { 
-                if (hasUpgrade("stone", 51)) {return new Decimal(1.75).pow(x).mul(2e7)}
+                if (hasUpgrade("stone", 51)) {return new Decimal(1.75).pow(x).mul(1.25e7)}
                 return new Decimal(1.75).pow(x).mul(1e8);
             },
             display() {
@@ -495,7 +488,7 @@ addLayer("stone", {
                 return amount;
             },
             tooltip() {
-                if (hasUpgrade("stone", 51)){return ('Base Cost: 2e7 <br> Cost Scaling: 1.75 <br> Special Effect: +1/Amount')}
+                if (hasUpgrade("stone", 51)){return ('Base Cost: 1.25e7 <br> Cost Scaling: 1.75 <br> Special Effect: +1/Amount')}
                 return ('Base Cost: 1e8 <br> Cost Scaling: 1.75 <br> Special Effect: +1/Amount')
             },
             unlocked() {
@@ -584,6 +577,7 @@ addLayer("coal", {
             title: "Triple Trouble",
             description: "Triple Stone and point gain",
             cost: new Decimal(5),
+            unlocked() { return hasUpgrade('coal', 11); },
         },
         13: {
             title: "Eye for an Eye",
@@ -606,7 +600,7 @@ addLayer("coal", {
                 return player[this.layer].points.add(1).pow(0.375);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
-            cost: new Decimal(2345),
+            cost: new Decimal(25000),
             tooltip() {
                 return "The Catalyst is at 75% efficiency";
             },
@@ -619,16 +613,16 @@ addLayer("coal", {
                 return player[this.layer].points.add(1).pow(0.25);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
-            cost: new Decimal(150000),
+            cost: new Decimal(250000),
             tooltip() {
                 return "The Catalyst is at 75% efficiency";
             },
-            unlocked() { return hasUpgrade('coal', 13); },
+            unlocked() { return hasUpgrade('coal', 14); },
         },
     },
     layerShown(){
         let isUnlocked = false
         if (hasUpgrade('stone', 45)){isUnlocked = true}
-        if (hasAchievement('a', 22)){isUnlocked = true}
+        if (hasAchievement('a', 21)){isUnlocked = true}
         return isUnlocked}
 })
