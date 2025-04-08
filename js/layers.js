@@ -89,6 +89,34 @@ addLayer("a", {
             tooltip: "Have 4 stone buyables",
             onComplete() {}
         },
+        25: {
+            name: "Milestoned",
+            done() {return hasMilestone('mile', 1)},
+            unlocked() {return true},
+            tooltip: "Get your first milestone.",
+            onComplete() {}
+        },
+        26: {
+            name: "Lucky Mile 7",
+            done() {return player.mile.points.gte(7)},
+            unlocked() {return true},
+            tooltip: "Have 7 Milestones",
+            onComplete() {}
+        },
+        31: {
+            name: "I Like a Good Challenge",
+            done() {return hasUpgrade("mile", 11)},
+            unlocked() {return true},
+            tooltip: "Unlock Challenges",
+            onComplete() {}
+        },
+        32: {
+            name: "Always Has Been",
+            done() {return hasUpgrade("coal", 35)},
+            unlocked() {return true},
+            tooltip: "Remove those pesky downsides.",
+            onComplete() {}
+        },
     },
     layerShown(){return true}
 },
@@ -111,6 +139,7 @@ addLayer("stone", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade("stone", 53)) mult = mult.add(6)
+        if (hasUpgrade("coal", 22)) mult = mult.add(buyableEffect('stone', 22).div(20))
 
         if (hasUpgrade("stone", 31)) mult = mult.times(2)
         if (hasUpgrade("stone", 33)) mult = mult.times(2)
@@ -121,6 +150,16 @@ addLayer("stone", {
         if (hasUpgrade("coal", 12)) mult = mult.times(3)
         if (hasUpgrade("stone", 52)) mult = mult.times(upgradeEffect("stone", 52))
         if (hasUpgrade("coal", 15)) mult = mult.times(upgradeEffect("coal", 15))
+        if (hasMilestone("mile", 1)) mult = mult.times(2)
+        if (hasUpgrade('stone', 55) & hasAchievement("a", 25)) mult = mult.times(2)
+        if (hasMilestone("mile", 4)) mult = mult.times(player.mile.points.pow(2).max(1));
+
+        if (hasChallenge("mile", 11)) mult = mult.times(challengeEffect("mile", 11));
+        if (hasUpgrade("coal", 31) & !hasUpgrade("coal", 35)) mult = mult.div(2);	
+        if (hasUpgrade("coal", 32)) mult = mult.times(5);
+        if (hasUpgrade("coal", 33)) mult = mult.times(5);
+        if (hasUpgrade("coal", 34)) mult = mult.times(5);
+        if (hasChallenge("mile", 12)) mult = mult.times(challengeEffect("mile", 12));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -134,7 +173,9 @@ addLayer("stone", {
         
         "Buyables": {
             content: ["main-display", "prestige-button", "blank", "buyables"],
-            unlocked() {return hasUpgrade('stone', 25)},
+            unlocked() {
+                if (inChallenge("mile", 12)) return false
+                else return hasUpgrade('stone', 25)},
         },
     },
     upgrades: {
@@ -188,6 +229,9 @@ addLayer("stone", {
             description: "Purchased stone upgrades boost point gain",
             effect() {
                 let baseEffect = player[this.layer].upgrades.length;
+                if (hasUpgrade('stone', 55) & hasAchievement("a", 25)) {
+                    return new Decimal(baseEffect).pow(1);
+                }
                 if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {
                     return new Decimal(baseEffect).pow(0.9);
                 }
@@ -312,7 +356,7 @@ addLayer("stone", {
         },
         44: {
             title: "Reinforced Processor",
-            description: "Upgrade Processor's boost is stronger, and boosts stone. (Upgrades^0.5 -> Upgrades^0.8)",
+            description: "Upgrade Processor's boost is stronger (Upgrades^0.8), and boosts stone.",
             cost: new Decimal(2e12),
             unlocked() { return hasUpgrade('stone', 43); },
         },
@@ -342,6 +386,9 @@ addLayer("stone", {
             description: "Stone boosts itself",
             effect() {
                 let baseEffect = player.stone.points.add(1).pow(0.07);
+                if (hasUpgrade('stone', 55) & hasAchievement("a", 25)) {
+                    baseEffect = player.stone.points.add(1).pow(0.09)
+                }
                 if (baseEffect.gte(50)) {
                     baseEffect = baseEffect.div(50).pow(0.25).mul(50);
                 }
@@ -373,8 +420,13 @@ addLayer("stone", {
         },
         55: {
             title: "Bad Pun",
-            description: "Unlock MileStones",
+            description() {
+                return hasAchievement("a", 25) 
+                    ? "This upgrade now boosts various other upgrades and currencies" 
+                    : "Unlock Milestones";
+            },
             cost: new Decimal(1e30),
+            tooltip(){if (hasAchievement("a", 21)) return "Upgrade Processor's Effect is Upgrades^1, Exponential Stone is stronger, and double point and stone gain"},
             unlocked() { return hasUpgrade('stone', 54) & hasUpgrade('coal', 15); },
         },
     },
@@ -391,12 +443,14 @@ addLayer("stone", {
                 let multiplier = new Decimal(1.25).pow(amount);
                 if (hasUpgrade('stone', 35)) multiplier = new Decimal(1.275).pow(amount);
                 let maxLimit = new Decimal(60).add(buyableEffect('stone', 21)).add(upgradeEffect("stone", 54));
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return `Multiply your point gain by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} stone
                 Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
             },
             canAfford() { 
                 let maxLimit = new Decimal(60).add(buyableEffect('stone', 21)).add(upgradeEffect("stone", 54));
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
                     && getBuyableAmount(this.layer, this.id).lt(maxLimit);
             },
@@ -431,12 +485,14 @@ addLayer("stone", {
                 let multiplier = new Decimal(1.15).pow(amount);
                 if (hasUpgrade('stone', 35)) multiplier = new Decimal(1.175).pow(amount);
                 let maxLimit = new Decimal(30).add(buyableEffect('stone', 21)).add(upgradeEffect("stone", 54));
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return `Multiply your stone gain by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} stone
                 Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
             },
             canAfford() { 
                 let maxLimit = new Decimal(30).add(buyableEffect('stone', 21)).add(upgradeEffect("stone", 54)); // Dynamic limit
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
                     && getBuyableAmount(this.layer, this.id).lt(maxLimit);
             },
@@ -468,13 +524,15 @@ addLayer("stone", {
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
                 let multiplier = new Decimal(1).mul(amount);
-                let maxLimit = new Decimal(40).add(upgradeEffect('stone', 51)).add(upgradeEffect("stone", 54));
+                let maxLimit = new Decimal(40).add(upgradeEffect('stone', 51)).add(upgradeEffect("stone", 54)).add(upgradeEffect("coal", 24));
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return `Purchase a warehouse to store more amplifiers. Increases amplifiers' limits by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} stone
                 Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
             },
             canAfford() { 
-                let maxLimit = new Decimal(40).add(upgradeEffect('stone', 51)).add(upgradeEffect("stone", 54))
+                let maxLimit = new Decimal(40).add(upgradeEffect('stone', 51)).add(upgradeEffect("stone", 54)).add(upgradeEffect("coal", 24))
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
                     && getBuyableAmount(this.layer, this.id).lt(maxLimit);
             },
@@ -498,18 +556,26 @@ addLayer("stone", {
         22: {
             title: "Fortified Foundations",
             cost(x) { 
+                if (hasUpgrade("coal", 21)) {
+                    return new Decimal(1.6).pow(x).mul(2.5e24);
+                }
                 return new Decimal(1.6).pow(x).mul(2.5e25);
             },
             display() {
                 let amount = getBuyableAmount(this.layer, this.id);
                 let multiplier = new Decimal(6).times(amount);
-                let maxLimit = new Decimal(100)
+                if (hasUpgrade("coal", 21)) {
+                    multiplier = new Decimal(20).times(amount);
+                }
+                let maxLimit = new Decimal(100);
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return `Add ${format(multiplier)} to base point gain.
-                Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} stone
-                Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
+                Cost: ${format(this.cost(amount))} stone
+                Amount: ${amount} / ${maxLimit}`;
             },
             canAfford() { 
-                let maxLimit = new Decimal(100)
+                let maxLimit = new Decimal(100);
+                if (hasMilestone("mile", 6)) maxLimit = maxLimit.add(tmp.mile.milestones[6].effect);
                 return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
                     && getBuyableAmount(this.layer, this.id).lt(maxLimit);
             },
@@ -520,15 +586,21 @@ addLayer("stone", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
+                if (hasUpgrade("coal", 21)) {
+                    return amount.times(20);
+                }
                 return amount.times(6);
             },
             tooltip() {
-                return ('Base Cost: 2.5e25 <br> Cost Scaling: 1.6 <br> Special Effect: +6/Amount')
+                if (hasUpgrade("coal", 21)) {
+                    return 'Base Cost: 2.5e24 <br> Cost Scaling: 1.6 <br> Special Effect: +20/Amount';
+                }
+                return 'Base Cost: 2.5e25 <br> Cost Scaling: 1.6 <br> Special Effect: +6/Amount';
             },
             unlocked() {
                 return hasUpgrade(this.layer, 54);
-            }
-        },
+            },  
+        }, 
     },
     hotkeys: [
         {key: "s", description: "S: Reset for stone", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -553,6 +625,13 @@ addLayer("coal", {
     exponent: 0.4, // Prestige currency exponent
     gainMult() {
         mult = new Decimal(1)
+        if (hasMilestone("mile", 1)) mult = mult.times(2)
+        if (hasMilestone("mile", 5)) mult = mult.times(player.mile.points.max(1));
+        if (hasUpgrade("coal", 31)) mult = mult.times(5);	
+        if (hasUpgrade("coal", 32)) mult = mult.times(5);	
+        if (hasUpgrade("coal", 33) & !hasUpgrade("coal", 35)) mult = mult.div(2);
+        if (hasUpgrade("coal", 34)) mult = mult.times(5);
+        if (hasChallenge("mile", 12)) mult = mult.times(challengeEffect("mile", 12));
         return mult
     },
     gainExp() {
@@ -597,11 +676,21 @@ addLayer("coal", {
             title: "Coal-Point Catalyst",
             description: "Boost your point gain based on coal",
             effect() {
-                return player[this.layer].points.add(1).pow(0.375);
+                let baseEffect = player[this.layer].points.add(1).pow(0.375);
+                if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.42)}
+                if (baseEffect.gte(5000)) {
+                    baseEffect = baseEffect.div(5000).pow(0.1).mul(5000);
+                }
+                return baseEffect
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
             cost: new Decimal(25000),
             tooltip() {
+                let baseEffect = player[this.layer].points.add(1).pow(0.375);
+                if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.42)}
+                
+                if (baseEffect.gte(5000)) {return "This catalyst is softcapped, raising progress past 5000 to 0.1."}
+                if (hasUpgrade("coal", 23)){return "The Catalyst is at 100% efficiency"}
                 return "The Catalyst is at 75% efficiency";
             },
             unlocked() { return hasUpgrade('coal', 13); },
@@ -610,19 +699,286 @@ addLayer("coal", {
             title: "Coal-Stone Catalyst",
             description: "Boost your stone gain based on coal",
             effect() {
-                return player[this.layer].points.add(1).pow(0.25);
+                let baseEffect = player[this.layer].points.add(1).pow(0.25)
+                if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.3)}
+                if (baseEffect.gte(500)) {
+                    baseEffect = baseEffect.div(500).pow(0.1).mul(500);
+                }
+                return baseEffect
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"; },
             cost: new Decimal(250000),
             tooltip() {
+                let baseEffect = player[this.layer].points.add(1).pow(0.375);
+                if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.42)}
+                
+                if (baseEffect.gte(500)) {return "This catalyst is softcapped, raising progress past 500 to 0.1."}
+                if (hasUpgrade("coal", 23)){return "The Catalyst is at 100% efficiency"}
                 return "The Catalyst is at 75% efficiency";
             },
             unlocked() { return hasUpgrade('coal', 14); },
+        },
+        21: {
+            title: "Efficient Foundations",
+            description: "Fortified Foundations' effect is +20, and divide base cost by 10.",
+            cost: new Decimal(5000000),
+            unlocked() { return hasUpgrade('coal', 15) & hasMilestone('mile', 2); },
+        },
+        22: {
+            title: "Multipurpose Foundations",
+            description: "Fortified Foundations adds to base stone gain aswell, but at a reduced rate (/20)",
+            cost: new Decimal(60000000),
+            unlocked() { return hasUpgrade('coal', 21) & hasMilestone('mile', 2); },
+        },
+        23: {
+            title: "Polished Coal Catalysts",
+            description: "Increase the efficiency of both coal catalysts unlocked so far up to 100%",
+            cost: new Decimal(1e9),
+            unlocked() { return hasUpgrade('coal', 22) & hasMilestone('mile', 2); },
+        },
+        24: {
+            title: "Grin-D",
+            description: "Add 1 to max Warehouses for every coal upgrade bought.",
+            cost: new Decimal(1.2e10),
+            effect() {
+                let baseEffect = 0;
+                if (hasUpgrade('coal', 24)){baseEffect = player[this.layer].upgrades.length}
+                return new Decimal(baseEffect);
+            },
+            effectDisplay() { 
+                return format(upgradeEffect(this.layer, this.id)); 
+            },
+            unlocked() { return hasUpgrade('coal', 23) & hasMilestone('mile', 2); },
+        },
+        25: {
+            title: "Kilometerstones",
+            description: "Unlock Milestone upgrades.",
+            cost: new Decimal(1e11),
+            unlocked() { return hasUpgrade('coal', 24) & hasMilestone('mile', 2); },
+        },
+        31: {
+            title: "Is it Worth it? I",
+            description: "5x coal and point gain, but halve stone gain.",
+            cost: new Decimal(1e12),
+            unlocked() { return hasUpgrade('coal', 25)},
+        },
+        32: {
+            title: "Is it Worth it? II",
+            description: "5x coal and stone gain, but halve point gain.",
+            cost: new Decimal(1e13),
+            unlocked() { return hasUpgrade('coal', 31)},
+        },
+        33: {
+            title: "Is it Worth it? III",
+            description: "5x point and stone gain, but halve coal gain.",
+            cost: new Decimal(5e14),
+            unlocked() { return hasUpgrade('coal', 32)},
+        },
+        34: {
+            title: "Is it Worth it? IV",
+            description: "5x point, stone and coal gain, but increase milestone scaling.",
+            cost: new Decimal(1.5e15),
+            unlocked() { return hasUpgrade('coal', 33)},
+        },
+        35: {
+            title: "Wait, It Was Always Worth It?",
+            description: "Remove the downsides of Is it Worth it? I-IV.",
+            cost: new Decimal(6.1e16),
+            unlocked() { return hasUpgrade('coal', 34)},
         },
     },
     layerShown(){
         let isUnlocked = false
         if (hasUpgrade('stone', 45)){isUnlocked = true}
         if (hasAchievement('a', 21)){isUnlocked = true}
+        return isUnlocked}
+})
+addLayer("mile", {
+    name: "Milestone", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "MS", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#555555",
+    requires: new Decimal(1e30), // Can be a function that takes requirement increases into account
+    resource: "Milestone", // Name of prestige currency
+    baseResource: "stone", // Name of resource prestige is based on
+    baseAmount() {return player.stone.points}, // Get the current amount of baseResource
+    branches: ["stone"],
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.03, // Prestige currency exponent
+    base: 10,
+    gainMult() {
+        mult = new Decimal(1)
+        if (hasUpgrade("coal", 34) & !hasUpgrade("coal", 35)) mult = mult.times(3);
+        if (hasMilestone("mile", 7)) mult = mult.div(3)
+        if (hasChallenge("mile", 12)) mult = mult.div(challengeEffect("mile", 12));
+        return mult
+
+    },
+    gainExp() {
+        return new Decimal(1)
+    },
+    
+    row: 1,
+    hotkeys: [
+        {key: "M", description: "M: Reset for a Milestone", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    tabFormat: {
+        "Main": {
+            content: ["main-display", "prestige-button", "blank", "milestones", "upgrades"]
+        },
+        "Challenges": {
+            content: ["main-display", "prestige-button", "blank", "challenges"],
+            unlocked() {return hasUpgrade('mile', 11)},
+        },
+    },
+    canBuyMax() {
+        if (hasUpgrade('mile', 11)) {return true}
+        else return false
+    },
+    milestones: {
+        1: {
+            requirementDescription: "1 Milestone",
+            effectDescription: "Milestones are upgrades that do not need to be bought. You will have to focus on doing both Coal and Milestone resets from now on. This milestone doubles point, stone, and coal gain.",
+            done() { return player.mile.points.gte(1) }
+        },
+        2: {
+            requirementDescription: "2 Milestones",
+            effectDescription: "Congrats on your second Milestone. This unlocks the next row of Coal upgrades.",
+            done() { return player.mile.points.gte(2) }
+        },
+        3: {
+            requirementDescription: "3 Milestones",
+            effectDescription() { 
+                return `Milestones^3 boost point gain. Currently: ${format(this.effect())}x`;
+            },
+            done() { return player.mile.points.gte(3); },
+            effect() {
+                return player.mile.points.pow(3).max(1); // Ensures at least x1 boost
+            },
+        },
+        4: {
+            requirementDescription: "5 Milestones",
+            effectDescription() { 
+                return `Milestones^2 boost stone gain. Currently: ${format(this.effect())}x`;
+            },
+            done() { return player.mile.points.gte(4); },
+            effect() {
+                return player.mile.points.pow(2).max(1); // Ensures at least x1 boost
+            },
+        },
+        5: {
+            requirementDescription: "10 Milestones",
+            effectDescription() { 
+                return `Milestones boost coal gain. Currently: ${format(this.effect())}x`;
+            },
+            done() { return player.mile.points.gte(10); },
+            effect() {
+                return player.mile.points.max(1); // Ensures at least x1 boost
+            },
+        },
+        6: {
+            requirementDescription: "13 Milestones",
+            effectDescription() { 
+                return `Challenge completions add to stone buyable limits. Currently: +${format(this.effect())}`;
+            },
+            done() { return player.mile.points.gte(13); },
+            effect() {
+                // Total completions of all challenges in the "stone" layer
+                let total = new Decimal(0);
+                for (let id in player.mile.challenges) {
+                    total = total.add(player.mile.challenges[id] || 0);
+                }
+                return total;
+            },
+        },
+        7: {
+            requirementDescription: "18 Milestones",
+            effectDescription() { 
+                return `Decrease Milestone (the currency) and challenge scaling.`;
+            },
+            done() { return player.mile.points.gte(18); },
+            effect() {
+            },
+        },
+    },
+    upgrades: {
+        11: {
+            title: "Challenging",
+            description: "Unlock Challenges, and you can buy max Milestones.",
+            cost: new Decimal(10),
+            unlocked() {return true},
+        },
+        12: {
+            title: "Another 10 Later",
+            description: "Unlock the 4th row of Coal Upgrades and Coal Buyables.",
+            cost: new Decimal(20),
+            unlocked() {return true},
+        },
+    },
+    challenges: {
+        11: {
+            name: "Anti-Upgrade",
+            challengeDescription: "When you Start a challenge, you do a Milestone reset, and get a debuff. You must reach a goal in order to finish the challenge, but can leave at any time. This one's debuff is quite simple, raise point gain to 0.1.",
+            completionLimit: 10,
+            goalDescription() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                let scaling = hasMilestone("mile", 7) ? 2.5 : 3; // Reduced scaling with milestone 7
+                const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
+                return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
+            },
+            canComplete() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                let scaling = hasMilestone("mile", 7) ? 2.5 : 3; // Match the scaling here too
+                const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
+                return player.points.gte(goal);
+            },
+            rewardDescription() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                const boost = completions * 3;
+                return `Point & Stone gain ${boost+1}x (applied after challenge debuff)`;
+            },
+            rewardEffect() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                return new Decimal(1 + (completions * 3));
+            },
+        },
+        12: {
+            name: "Unbuyable",
+            challengeDescription: "You can't unlock buyables.",
+            completionLimit: 25,
+            goalDescription() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                let scaling = 2.5; // Reduced scaling with milestone 7
+                const goal = new Decimal(2e22).times(Decimal.pow(scaling, completions));
+                return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
+            },
+            canComplete() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                let scaling = 2.5; // Match the scaling here too
+                const goal = new Decimal(2e22).times(Decimal.pow(scaling, completions));
+                return player.points.gte(goal);
+            },
+            rewardDescription() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                const boost = completions * 2;
+                return `Milestone, Coal, Stone and Point gain ${boost+1}x (applied after challenge debuff)`;
+            },
+            rewardEffect() {
+                const completions = player[this.layer].challenges[this.id] || 0;
+                return new Decimal(1 + (completions * 3));
+            },
+        },
+    },
+    
+    
+    
+    layerShown(){
+        let isUnlocked = false
+        if (hasUpgrade('stone', 55)){isUnlocked = true}
+        if (hasAchievement('a', 25)){isUnlocked = true}
         return isUnlocked}
 })
