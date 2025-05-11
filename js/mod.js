@@ -45,7 +45,7 @@ function getPointGen() {
 	if (hasUpgrade("stone", 24)) gain = gain.add(0.3)
 	if (hasUpgrade("stone", 34)) gain = gain.add(0.5)
 	if (hasUpgrade("stone", 53)) gain = gain.add(12)
-	gain = gain.add(buyableEffect('stone', 22))
+	if (!inChallenge("mile", 12)) gain = gain.add(buyableEffect('stone', 22))
 	
 	if (hasUpgrade("stone", 11)) gain = gain.times(1.5)
 	if (hasUpgrade("stone", 12)) gain = gain.times(2)
@@ -53,11 +53,13 @@ function getPointGen() {
 	if (hasUpgrade("stone", 15)) gain = gain.times(upgradeEffect("stone", 15))
 	if (hasUpgrade("stone", 21)) gain = gain.times(upgradeEffect("stone", 21))
 	if (hasUpgrade("stone", 22)) gain = gain.times(3)
-	gain = gain.times(buyableEffect('stone', 11))
+	if (!inChallenge("mile", 12)) gain = gain.times(buyableEffect('stone', 11))
 	if (hasUpgrade("stone", 32)) gain = gain.times(4)
 	if (hasUpgrade("stone", 33)) gain = gain.times(2)
 	if (hasUpgrade('stone', 45) & hasAchievement("a", 22)) gain = gain.times(2)
+
 	if (hasUpgrade("coal", 12)) gain = gain.times(3)
+	if (hasUpgrade("coal", 13)) gain = gain.times(upgradeEffect("coal", 13))
 	if (hasUpgrade("coal", 14)) gain = gain.times(upgradeEffect("coal", 14))
 	if (hasMilestone("mile", 1)) gain = gain.times(2)
 	if (hasUpgrade('stone', 55) & hasAchievement("a", 25)) gain = gain.times(2)
@@ -67,10 +69,12 @@ function getPointGen() {
 	if (hasUpgrade("coal", 32) & !hasUpgrade("coal", 35)) gain = gain.div(2);	
 	if (hasUpgrade("coal", 33)) gain = gain.times(5);	
 	if (hasUpgrade("coal", 34)) gain = gain.times(5);
+	if (hasUpgrade("coal", 42)) gain = gain.times(upgradeEffect("coal", 42));
 
 
 	if (inChallenge("mile", 11)) gain = gain.pow(0.1);
 	if (hasChallenge("mile", 11)) gain = gain.times(challengeEffect("mile", 11));
+	if (hasChallenge("mile", 12)) gain = gain.times(challengeEffect("mile", 12));
 	return gain
 }
 
