@@ -86,21 +86,21 @@ addLayer("a", {
             name: "Buyable Grid",
             done() {return hasUpgrade('stone', 54)},
             unlocked() {return true},
-            tooltip: "Have 4 stone buyables",
+            tooltip: "Have 4 stone buyables unlocked.",
             onComplete() {}
         },
         25: {
             name: "Milestoned",
             done() {return hasMilestone('mile', 1)},
             unlocked() {return true},
-            tooltip: "Get your first milestone.",
+            tooltip: "Get your first Milestone.",
             onComplete() {}
         },
         26: {
             name: "Lucky Mile 7",
             done() {return player.mile.points.gte(7)},
             unlocked() {return true},
-            tooltip: "Have 7 Milestones",
+            tooltip: "Have 7 MileStones",
             onComplete() {}
         },
         31: {
@@ -111,27 +111,43 @@ addLayer("a", {
             onComplete() {}
         },
         32: {
+            name: "Lucky Challenge 7",
+            
+            comp() {
+                // Total completions of all challenges in the "stone" layer
+                let total = new Decimal(0);
+                for (let id in player.mile.challenges) {
+                    total = total.add(player.mile.challenges[id] || 0);
+                }
+                return total;
+            },
+            done() {return this.comp().gte(7)},
+            unlocked() {return true},
+            tooltip: "Have a lucky number of completions.",
+            onComplete() {}
+        },
+        33: {
             name: "Always Has Been",
             done() {return hasUpgrade("coal", 35)},
             unlocked() {return true},
             tooltip: "Remove those pesky downsides.",
             onComplete() {}
         },
-        33: {
+        34: {
             name: "Deja Vu",
             done() {return hasUpgrade("mile", 12)},
             unlocked() {return true},
             tooltip: "Unlock buyables, again.",
             onComplete() {}
         },
-        34: {
-            name: "Why is this number everywhere?",
-            done() {return player.mile.points.gte(37)},
+        35: {
+            name: "30 Decades of Progress",
+            done() {return player.mile.points.gte(30)},
             unlocked() {return true},
-            tooltip: "Have the most commonly picked number from 1-100 milestones.",
+            tooltip: "since when are milestones years?",
             onComplete() {}
         },
-        35: {
+        36: {
             name: "Pick your Poison",
             done() {return hasUpgrade("mile", 13)},
             unlocked() {return true},
@@ -463,7 +479,7 @@ addLayer("stone", {
             description() {
                 return hasAchievement("a", 25) 
                     ? "This upgrade now boosts various other upgrades and currencies" 
-                    : "Unlock Milestones";
+                    : "Unlock MileStones";
             },
             cost: new Decimal(1e30),
             tooltip(){if (hasAchievement("a", 25)) return "Upgrade Processor's Effect is Upgrades^1, Exponential Stone is stronger, and double point and stone gain"},
@@ -953,7 +969,7 @@ addLayer("coal", {
                 let amount = getBuyableAmount(this.layer, this.id);
                 let multiplier = new Decimal(1.1).pow(amount).times(buyableEffect("coal", 21));
                 let maxLimit = new Decimal(30)
-                return `Divide base Unbuyable goal and milestone requirement by ${format(multiplier)}.
+                return `Divide base Unbuyable goal and MileStone requirement by ${format(multiplier)}.
                 Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} coal
                 Amount: ${getBuyableAmount(this.layer, this.id)} / ${maxLimit}`;
             },
@@ -1030,7 +1046,7 @@ addLayer("mile", {
     }},
     color: "#555555",
     requires: new Decimal(1e30), // Can be a function that takes requirement increases into account
-    resource: "Milestone", // Name of prestige currency
+    resource: "MileStones", // Name of prestige currency
     baseResource: "stone", // Name of resource prestige is based on
     baseAmount() {return player.stone.points}, // Get the current amount of baseResource
     branches: ["stone"],
@@ -1069,21 +1085,21 @@ addLayer("mile", {
     },
     milestones: {
         1: {
-            requirementDescription: "1 Milestone",
-            effectDescription: "Milestones are upgrades that do not need to be bought. You will have to focus on doing both Coal and Milestone resets from now on. This milestone doubles point, stone, and coal gain.",
+            requirementDescription: "1 MileStone",
+            effectDescription: "Milestones are upgrades that do not need to be bought. You will have to focus on doing both Coal and MileStone resets from now on. This milestone doubles point, stone, and coal gain.",
             done() { return player.mile.points.gte(1) },
             shown() {return true}
         },
         2: {
-            requirementDescription: "2 Milestones",
+            requirementDescription: "2 MileStones",
             effectDescription: "Congrats on your second Milestone. This unlocks the next row of Coal upgrades.",
             done() { return player.mile.points.gte(2) },
             unlocked() {return hasMilestone("mile", 1)}
         },
         3: {
-            requirementDescription: "3 Milestones",
+            requirementDescription: "3 MileStones",
             effectDescription() { 
-                return `Milestones^3 boost point gain. Currently: ${format(this.effect())}x`;
+                return `MileStones^3 boost point gain. Currently: ${format(this.effect())}x`;
             },
             done() { return player.mile.points.gte(3); },
             effect() {
@@ -1092,9 +1108,9 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 2)}
         },
         4: {
-            requirementDescription: "5 Milestones",
+            requirementDescription: "5 MileStones",
             effectDescription() { 
-                return `Milestones^2 boost stone gain. Currently: ${format(this.effect())}x`;
+                return `MileStones^2 boost stone gain. Currently: ${format(this.effect())}x`;
             },
             done() { return player.mile.points.gte(5); },
             effect() {
@@ -1103,9 +1119,9 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 3)}
         },
         5: {
-            requirementDescription: "10 Milestones",
+            requirementDescription: "10 MileStones",
             effectDescription() { 
-                return `Milestones boost coal gain. Currently: ${format(this.effect())}x`;
+                return `MileStones boost coal gain. Currently: ${format(this.effect())}x`;
             },
             done() { return player.mile.points.gte(10); },
             effect() {
@@ -1114,7 +1130,7 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 4)}
         },
         6: {
-            requirementDescription: "13 Milestones",
+            requirementDescription: "13 MileStones",
             effectDescription() { 
                 return `Challenge completions add to stone buyable limits. Currently: +${format(this.effect())}`;
             },
@@ -1130,9 +1146,9 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 5)}
         },
         7: {
-            requirementDescription: "18 Milestones",
+            requirementDescription: "18 MileStones",
             effectDescription() { 
-                return `Decrease Milestone (the currency) and challenge scaling.`;
+                return `Decrease MileStone and challenge scaling.`;
             },
             done() { return player.mile.points.gte(18); },
             effect() {
@@ -1140,9 +1156,9 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 6)}
         },
         8: {
-            requirementDescription: "24 Milestones",
+            requirementDescription: "24 MileStones",
             effectDescription() { 
-                return `Keep stone buyables on Coal and Milestone resets.`;
+                return `Keep stone buyables on Coal and MileStone resets.`;
             },
             done() { return player.mile.points.gte(24); },
             effect() {
@@ -1150,7 +1166,7 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 7)}
         },
         9: {
-            requirementDescription: "36 Milestones",
+            requirementDescription: "36 MileStones",
             effectDescription() { 
                 return `Unlock another Coal Buyable.`;
             },
@@ -1226,7 +1242,7 @@ addLayer("mile", {
             rewardDescription() {
                 const completions = player[this.layer].challenges[this.id] || 0;
                 const boost = completions * 2;
-                return `Milestone, Coal, Stone and Point gain ${boost+1}x (applied after challenge debuff)`;
+                return `MileStone, Coal, Stone and Point gain ${boost+1}x (applied after challenge debuff)`;
             },
             rewardEffect() {
                 const completions = player[this.layer].challenges[this.id] || 0;
@@ -1252,14 +1268,14 @@ addLayer("iron", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#d4d7d9",
-    requires: new Decimal(1e12), // Can be a function that takes requirement increases into account
+    color: "#cccccc",
+    requires: new Decimal(1e30), // Can be a function that takes requirement increases into account
     resource: "iron", // Name of prestige currency
     baseResource: "coal", // Name of resource prestige is based on
     baseAmount() {return player.coal.points}, // Get the current amount of baseResource
     branches: ["coal"],
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.35, // Prestige currency exponent
+    exponent: 0.25, // Prestige currency exponent
     gainMult() {
         mult = new Decimal(1)
         return mult
@@ -1268,13 +1284,54 @@ addLayer("iron", {
         return new Decimal(1)
     },
     row: 2,
-    resetDescription: "Convert your iron to ",
+    resetDescription: "Convert your coal to ",
     hotkeys: [
         {key: "i", description: "I: Reset for iron", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     tabFormat: {
         "Main": {
-            content: ["main-display", "prestige-button", "blank", "upgrades", "buyables"]
+            content: ["main-display", "prestige-button", ["display-text", "This is your first big choice. Choosing Iron will increase the base requirement for Lead resets. The Iron layer is more open, focusing on expanding the first 3 layers and better boosts."], "blank", "upgrades", "buyables"]
+        },
+    },
+    upgrades:{
+    },
+    buyables: {
+    },
+    milestones: {
+    },
+    layerShown(){return (hasUpgrade('mile', 13))},
+})
+addLayer("lead", {
+    name: "Lead", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#7a8a8f",
+    requires: new Decimal(1e30), // Can be a function that takes requirement increases into account
+    resource: "lead", // Name of prestige currency  
+    baseResource: "coal", // Name of resource prestige is based on
+    baseAmount() {return player.coal.points}, // Get the current amount of baseResource
+    branches: ["coal"],
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.25, // Prestige currency exponent
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() {
+        return new Decimal(1)
+    },
+    row: 2,
+    resetDescription: "Convert your coal to ",
+    hotkeys: [
+        {key: "l", description: "L: Reset for lead", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    tabFormat: {
+        "Main": {
+            content: ["main-display", "prestige-button", ["display-text", "This is your first big choice. Choosing Lead will increase the base requirement for Iron resets. The Lead layer is more self contained, focusing on new content within Lead and QOL for the first 3 layers."], "blank", "upgrades", "buyables"]
         },
     },
     upgrades:{

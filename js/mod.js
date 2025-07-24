@@ -88,8 +88,9 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000")) // To be determined
+    return player.iron.points.gte(1) || player.lead.points.gte(1);
 }
+
 
 
 
