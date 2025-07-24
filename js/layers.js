@@ -114,7 +114,6 @@ addLayer("a", {
             name: "Lucky Challenge 7",
             
             comp() {
-                // Total completions of all challenges in the "stone" layer
                 let total = new Decimal(0);
                 for (let id in player.mile.challenges) {
                     total = total.add(player.mile.challenges[id] || 0);
@@ -201,17 +200,15 @@ addLayer("stone", {
         if (hasChallenge("mile", 12)) mult = mult.times(challengeEffect("mile", 12));
         return mult
     },
-    gainExp() { // Calculate the exponent on main currency from bonuses
+    gainExp() { 
         return new Decimal(1)
     },
     passiveGeneration() {return buyableEffect("coal", 11)},
-    row: 0, // Row the layer is in on the tree (0 is the first row)
+    row: 0,
     doReset(resettingLayer) {
-        // Don't override default behavior unless it's a higher layer or a side layer
         if (layers[resettingLayer].row > this.row) {
             let keep = [];
     
-            // Keep buyables if milestone 8 is achieved and the reset is from coal or mile
             if ((resettingLayer === "coal" || resettingLayer === "mile") && hasMilestone("mile", 8)) {
                 keep.push("buyables");
             }
@@ -985,7 +982,7 @@ addLayer("coal", {
             },
             effect() {
                 let amount = getBuyableAmount(this.layer, this.id);
-                return new Decimal(1.1).pow(amount).times(buyableEffect("coal", 21)); // BSM effect
+                return new Decimal(1.1).pow(amount).times(buyableEffect("coal", 21));
             },
             tooltip() { 
                 return ('Base Cost: 2e19 <br> Cost Scaling: 1.5 <br> Effect Scaling: 1.1')
@@ -1103,7 +1100,7 @@ addLayer("mile", {
             },
             done() { return player.mile.points.gte(3); },
             effect() {
-                return player.mile.points.pow(3).max(1); // Ensures at least x1 boost
+                return player.mile.points.pow(3).max(1); 
             },
             unlocked() {return hasMilestone("mile", 2)}
         },
@@ -1114,7 +1111,7 @@ addLayer("mile", {
             },
             done() { return player.mile.points.gte(5); },
             effect() {
-                return player.mile.points.pow(2).max(1); // Ensures at least x1 boost
+                return player.mile.points.pow(2).max(1);
             },
             unlocked() {return hasMilestone("mile", 3)}
         },
@@ -1125,7 +1122,7 @@ addLayer("mile", {
             },
             done() { return player.mile.points.gte(10); },
             effect() {
-                return player.mile.points.max(1); // Ensures at least x1 boost
+                return player.mile.points.max(1); 
             },
             unlocked() {return hasMilestone("mile", 4)}
         },
@@ -1136,7 +1133,7 @@ addLayer("mile", {
             },
             done() { return player.mile.points.gte(13); },
             effect() {
-                // Total completions of all challenges in the "stone" layer
+              
                 let total = new Decimal(0);
                 for (let id in player.mile.challenges) {
                     total = total.add(player.mile.challenges[id] || 0);
@@ -1203,13 +1200,13 @@ addLayer("mile", {
             completionLimit: 10,
             goalDescription() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; // Reduced scaling with milestone 7
+                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
             },
             canComplete() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; // Match the scaling here too
+                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return player.points.gte(goal);
             },
@@ -1229,13 +1226,13 @@ addLayer("mile", {
             completionLimit: 35,
             goalDescription() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = 2; // Reduced scaling with milestone 7
+                let scaling = 2; 
                 const goal = new Decimal(1e23).div(buyableEffect("coal", 12)).times(Decimal.pow(scaling, completions));
                 return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
             },
             canComplete() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = 2; // Match the scaling here too
+                let scaling = 2; 
                 const goal = new Decimal(1e23).div(buyableEffect("coal", 12)).times(Decimal.pow(scaling, completions));
                 return player.points.gte(goal);
             },
