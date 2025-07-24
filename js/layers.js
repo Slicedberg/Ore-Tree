@@ -79,21 +79,21 @@ addLayer("a", {
             name: "Welcome Back",
             done() {return hasUpgrade('stone', 51)},
             unlocked() {return true},
-            tooltip: "I thought there weren't any more Stone upgrades!",
+            tooltip: "I thought there weren't any more Stone upgrades",
             onComplete() {}
         },
         24: {
             name: "Buyable Grid",
             done() {return hasUpgrade('stone', 54)},
             unlocked() {return true},
-            tooltip: "Have 4 stone buyables unlocked.",
+            tooltip: "Have 4 stone buyables unlocked",
             onComplete() {}
         },
         25: {
             name: "Milestoned",
             done() {return hasMilestone('mile', 1)},
             unlocked() {return true},
-            tooltip: "Get your first Milestone.",
+            tooltip: "Get your first Milestone",
             onComplete() {}
         },
         26: {
@@ -122,21 +122,21 @@ addLayer("a", {
             },
             done() {return this.comp().gte(7)},
             unlocked() {return true},
-            tooltip: "Have a lucky number of completions.",
+            tooltip: "Have a lucky number of completions",
             onComplete() {}
         },
         33: {
             name: "Always Has Been",
             done() {return hasUpgrade("coal", 35)},
             unlocked() {return true},
-            tooltip: "Remove those pesky downsides.",
+            tooltip: "Remove those pesky downsides",
             onComplete() {}
         },
         34: {
             name: "Deja Vu",
             done() {return hasUpgrade("mile", 12)},
             unlocked() {return true},
-            tooltip: "Unlock buyables, again.",
+            tooltip: "Unlock buyables, again",
             onComplete() {}
         },
         35: {
@@ -150,7 +150,7 @@ addLayer("a", {
             name: "Pick your Poison",
             done() {return hasUpgrade("mile", 13)},
             unlocked() {return true},
-            tooltip: "Unlock Iron and Lead.",
+            tooltip: "Unlock Iron and Lead",
             onComplete() {}
         },
     },
