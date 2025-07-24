@@ -143,7 +143,7 @@ addLayer("a", {
             name: "30 Decades of Progress",
             done() {return player.mile.points.gte(30)},
             unlocked() {return true},
-            tooltip: "since when are milestones years?",
+            tooltip: "Since when are Milestones years?",
             onComplete() {}
         },
         36: {
@@ -325,7 +325,7 @@ addLayer("stone", {
         },
         23: {
             title: "Reinforced Catalyst",
-            description: "The Catalyst's efficiency is now 100%",
+            description: "The Catalyst's efficiency is now 100% points^(0.222 -> 0.370)",
             cost: new Decimal(200),
             unlocked() { return hasUpgrade('stone', 22); },
         },
@@ -402,8 +402,8 @@ addLayer("stone", {
                 if (baseEffect.gte(50)) {
                     return "This Catalyst is softcapped, making effect progress past 50x raised to 0.25"
                 }
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {return "This Catalyst is at 100% efficiency"}
-                return "This Catalyst is at 60% efficiency";
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {return "This Catalyst is at 100% efficiency (points^0.08)"}
+                return "This Catalyst is at 60% efficiency (points^0.05)";
             },
             unlocked() { return hasUpgrade('stone', 42); },
         },
