@@ -140,7 +140,7 @@ addLayer("a", {
             onComplete() {}
         },
         35: {
-            name: "30 Decades of Progress",
+            name: "3 Decades of Progress",
             done() {return player.mile.points.gte(30)},
             unlocked() {return true},
             tooltip: "Since when are Milestones years?",
@@ -148,7 +148,7 @@ addLayer("a", {
         },
         36: {
             name: "Pick your Poison",
-            done() {return hasUpgrade("mile", 13)},
+            done() {return hasUpgrade("mile", 14)},
             unlocked() {return true},
             tooltip: "Unlock Iron and Lead",
             onComplete() {}
@@ -904,7 +904,7 @@ addLayer("coal", {
         44: {
             title: "Grin-D-er",
             description: "Grin-D adds to all stone buyables, but at a reduced rate. (/2, rounded down)",
-            cost: new Decimal(5e25),
+            cost: new Decimal(1e26),
             effect() {
                 let baseEffect = 0;
                 if (hasUpgrade('coal', 44)) {
@@ -920,7 +920,7 @@ addLayer("coal", {
         45: {
             title: "Yet Another Processor Upgrade",
             description: "Raise Upgrade Processor and AUP to 1.5, and AUP boosts coal gain at a reduced rate.",
-            cost: new Decimal(1e27),
+            cost: new Decimal(2e27),
             effect() {
                 let baseEffect = player[this.layer].upgrades.length;
                 return new Decimal(baseEffect).pow(1.5).pow(0.6);
@@ -1216,13 +1216,13 @@ addLayer("mile", {
             completionLimit: 10,
             goalDescription() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; 
+                let scaling = hasMilestone("mile", 7) ? 2.3 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
             },
             canComplete() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.4 : 3; 
+                let scaling = hasMilestone("mile", 7) ? 2.3 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return player.points.gte(goal);
             },
