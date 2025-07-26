@@ -212,6 +212,9 @@ addLayer("stone", {
             if ((resettingLayer === "coal" || resettingLayer === "mile") && hasMilestone("mile", 8)) {
                 keep.push("buyables");
             }
+            if ((resettingLayer === "coal" || resettingLayer === "mile") && hasUpgrade("mile", 13)) {
+                keep.push("upgrades");
+            }
     
             layerDataReset(this.layer, keep);
         }
@@ -269,8 +272,8 @@ addLayer("stone", {
                 : player[this.layer].points.add(1).pow(0.222);
                 
                 if (baseEffect.gte(500)) return "This Catalyst is softcapped, making effect progress past 500x raised to 0.05"
-                if (hasUpgrade('stone', 23)) return "This Catalyst is at 100% efficiency";
-                return "The Catalyst is at 60% efficiency";
+                if (hasUpgrade('stone', 23)) return "Catalyst Power: Stone^0.370";
+                return "Catalyst Power: Stone^0.222";
             },
             unlocked() {return hasUpgrade('stone', 13)}
         },
@@ -325,7 +328,7 @@ addLayer("stone", {
         },
         23: {
             title: "Reinforced Catalyst",
-            description: "The Catalyst's efficiency is now 100% points^(0.222 -> 0.370)",
+            description: "The Catalyst is 66% stronger. (Points^0.222 -> 0.370)",
             cost: new Decimal(200),
             unlocked() { return hasUpgrade('stone', 22); },
         },
@@ -402,8 +405,8 @@ addLayer("stone", {
                 if (baseEffect.gte(50)) {
                     return "This Catalyst is softcapped, making effect progress past 50x raised to 0.25"
                 }
-                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {return "This Catalyst is at 100% efficiency (points^0.08)"}
-                return "This Catalyst is at 60% efficiency (points^0.05)";
+                if (hasUpgrade('stone', 45) & hasAchievement("a", 21)) {return "Catalyst Power: Points^0.08"}
+                return "Catalyst Power: Points^0.05";
             },
             unlocked() { return hasUpgrade('stone', 42); },
         },
@@ -421,7 +424,7 @@ addLayer("stone", {
                     : "Unlock the first Ore, Coal";
             },
             cost: new Decimal(1e15),
-            tooltip(){if (hasAchievement("a", 21)) return "Upgrade Processor's Effect is Upgrades^0.9, Point-Stone Catalyst has 100% efficiency, and double point and stone gain"},
+            tooltip(){if (hasAchievement("a", 21)) return "Upgrade Processor's Effect is Upgrades^0.9, Point-Stone Catalyst's Power is Points^0.08, and double point and stone gain"},
             unlocked() { return hasUpgrade('stone', 44); },
         },
         51: {
@@ -451,7 +454,12 @@ addLayer("stone", {
             cost: new Decimal(1e20),
             tooltip() {
                 let baseEffect = player.stone.points.add(1).pow(0.07)
+                if (hasUpgrade('stone', 55) & hasAchievement("a", 25)) {
+                    baseEffect = player.stone.points.add(1).pow(0.09)
+                    return "This upgrade's effect is Stone^0.09"
+                }
                 if (baseEffect.gte(50)) return "This upgrade is softcapped, making effect progress past 50x raised to 0.25"
+                else return "This upgrade's effect is Stone^0.07"
             },
             unlocked() { return hasUpgrade('stone', 51) & hasUpgrade('coal', 13);},
         },
@@ -750,9 +758,9 @@ addLayer("coal", {
                 let baseEffect = player[this.layer].points.add(1).pow(0.375);
                 if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.42)}
                 
-                if (baseEffect.gte(5000)) {return "This catalyst is softcapped, raising progress past 5000 to 0.1."}
-                if (hasUpgrade("coal", 23)){return "The Catalyst is at 100% efficiency"}
-                return "The Catalyst is at 75% efficiency";
+                if (baseEffect.gte(5000)) {return "This catalyst is softcapped, raising progress past 5000x to 0.1."}
+                if (hasUpgrade("coal", 23)){return "Catalyst Power: Coal^0.42"}
+                return "Catalyst Power: Coal^0.375";
             },
             unlocked() { return hasUpgrade('coal', 13); },
         },
@@ -773,9 +781,9 @@ addLayer("coal", {
                 let baseEffect = player[this.layer].points.add(1).pow(0.25);
                 if (hasUpgrade("coal", 23)){baseEffect = player[this.layer].points.add(1).pow(0.3)}
                 
-                if (baseEffect.gte(500)) {return "This catalyst is softcapped, raising progress past 500 to 0.1."}
-                if (hasUpgrade("coal", 23)){return "The Catalyst is at 100% efficiency"}
-                return "The Catalyst is at 75% efficiency";
+                if (baseEffect.gte(500)) {return "This catalyst is softcapped, raising progress past 500x to 0.1."}
+                if (hasUpgrade("coal", 23)){return "Catalyst Power: Coal^0.3"}
+                return "Catalyst Power: Coal^0.25";
             },
             unlocked() { return hasUpgrade('coal', 14); },
         },
@@ -793,8 +801,9 @@ addLayer("coal", {
         },
         23: {
             title: "Polished Coal Catalysts",
-            description: "Increase the efficiency of both coal catalysts unlocked so far up to 100%",
+            description: "Increase the efficiency of both coal catalysts.",
             cost: new Decimal(1e9),
+            tooltip() {"(0.375 to 0.42 and 0.25 to 0.3)"},
             unlocked() { return hasUpgrade('coal', 22) & hasMilestone('mile', 2); },
         },
         24: {
@@ -862,6 +871,7 @@ addLayer("coal", {
             tooltip() {
                 let baseEffect = player.coal.points.pow(0.08).add(1)
                 if (baseEffect.gte(100)) return "This upgrade is softcapped, making effect progress past 100x raised to 0.1"
+                else return "This upgrade's effect is Coal^0.08"
             },
             unlocked() { return hasUpgrade('coal', 35) & hasUpgrade("mile", 12)},
         },
@@ -1153,11 +1163,11 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 6)}
         },
         8: {
-            requirementDescription: "24 MileStones",
+            requirementDescription: "22 MileStones",
             effectDescription() { 
-                return `Keep stone buyables on Coal and MileStone resets.`;
+                return `Keep Stone buyables on Coal and MileStone resets.`;
             },
-            done() { return player.mile.points.gte(24); },
+            done() { return player.mile.points.gte(22); },
             effect() {
             },
             unlocked() {return hasMilestone("mile", 7)}
@@ -1187,10 +1197,16 @@ addLayer("mile", {
             unlocked() {return hasUpgrade("mile", 11)},
         },
         13: {
+            title: "Permastone",
+            description: "Keep Stone upgrades on Coal and MileStone resets.",
+            cost: new Decimal(30),
+            unlocked() {return hasUpgrade("mile", 12)},
+        },
+        14: {
             title: "More Ores",
             description: "Unlock 2 new layers: Lead and Iron.",
             cost: new Decimal(40),
-            unlocked() {return hasUpgrade("mile", 12)},
+            unlocked() {return hasUpgrade("mile", 13)},
         },
     },
     challenges: {
@@ -1296,7 +1312,7 @@ addLayer("iron", {
     },
     milestones: {
     },
-    layerShown(){return (hasUpgrade('mile', 13))},
+    layerShown(){return (hasUpgrade('mile', 14))},
 })
 addLayer("lead", {
     name: "Lead", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -1337,5 +1353,5 @@ addLayer("lead", {
     },
     milestones: {
     },
-    layerShown(){return (hasUpgrade('mile', 13))},
+    layerShown(){return (hasUpgrade('mile', 14))},
 })
