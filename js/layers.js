@@ -209,7 +209,7 @@ addLayer("stone", {
         if (layers[resettingLayer].row > this.row) {
             let keep = [];
     
-            if ((resettingLayer === "coal" || resettingLayer === "mile") && hasMilestone("mile", 8)) {
+            if ((resettingLayer === "coal" || resettingLayer === "mile") && hasMilestone("mile", 7)) {
                 keep.push("buyables");
             }
             if ((resettingLayer === "coal" || resettingLayer === "mile") && hasUpgrade("mile", 13)) {
@@ -1063,7 +1063,7 @@ addLayer("mile", {
     gainMult() {
         mult = new Decimal(1)
         if (hasUpgrade("coal", 34) & !hasUpgrade("coal", 35)) mult = mult.times(3);
-        if (hasMilestone("mile", 7)) mult = mult.div(3)
+        if (hasMilestone("mile", 8)) mult = mult.div(3)
         mult = mult.div(buyableEffect("coal", 12))
         if (hasChallenge("mile", 12)) mult = mult.div(challengeEffect("mile", 12));
         return mult
@@ -1153,21 +1153,21 @@ addLayer("mile", {
             unlocked() {return hasMilestone("mile", 5)}
         },
         7: {
-            requirementDescription: "18 MileStones",
+            requirementDescription: "15 MileStones",
             effectDescription() { 
-                return `Decrease MileStone and challenge scaling.`;
+                return `Keep Stone buyables on Coal and MileStone resets.`;
             },
-            done() { return player.mile.points.gte(18); },
+            done() { return player.mile.points.gte(15); },
             effect() {
             },
             unlocked() {return hasMilestone("mile", 6)}
         },
         8: {
-            requirementDescription: "22 MileStones",
+            requirementDescription: "18 MileStones",
             effectDescription() { 
-                return `Keep Stone buyables on Coal and MileStone resets.`;
+                return `Decrease MileStone and challenge scaling.`;
             },
-            done() { return player.mile.points.gte(22); },
+            done() { return player.mile.points.gte(18); },
             effect() {
             },
             unlocked() {return hasMilestone("mile", 7)}
@@ -1216,13 +1216,13 @@ addLayer("mile", {
             completionLimit: 10,
             goalDescription() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.3 : 3; 
+                let scaling = hasMilestone("mile", 8) ? 2.3 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return `${format(goal)} points (Completed: ${completions}/${this.completionLimit})`;
             },
             canComplete() {
                 const completions = player[this.layer].challenges[this.id] || 0;
-                let scaling = hasMilestone("mile", 7) ? 2.3 : 3; 
+                let scaling = hasMilestone("mile", 8) ? 2.3 : 3; 
                 const goal = new Decimal(1000).times(Decimal.pow(scaling, completions));
                 return player.points.gte(goal);
             },

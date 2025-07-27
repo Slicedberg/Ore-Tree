@@ -37,11 +37,12 @@ CHAPTER 3: CHALLENGES (Unlocking Challenges -> Unlocking Lead/Iron)
     - Challenges are explained in-game. When you unlock the first challenge, get 4 completions before anything else.
     - For now, just keep getting milestones and completing challenges until you can buy coal upgrades in 1-2 resets.
     - The Is It Worth It? (IIWI) upgrades are, in fact, worth it, and you should buy them as soon as possible.
-    - Make sure that when you buy IIWI IV you have at least 16 MileStones. Don't worry if you bought it before, it won't slow progress too much.
+    - At 15 Milestones, you'll start to keep buyables! Remember that you only keep them, so you'll still have to buy more when the cap goes up.
+    - Make sure that when you buy IIWI IV you have at least 16 MileStones and around 7 challenge completions. Don't worry if you bought it before, it won't slow progress too much.
     - Get WIWAWI (yes, that's what it's called) with 3-4 resets to remove all penalties. It's faster to get this right after IIWI IV and 7 challenge completions.
-    - Get 2 MileStones at once for 18 MileStones and get all 10 completions of 'Anti-Upgrade' and 19 MileStones.
+    - Get  18 MileStones and get all 10 completions of 'Anti-Upgrade' and 19 MileStones.
     - When you complete 'Anti-Upgrade', you'll unlock a new challenge, 'Unbuyable'. Get 8 completions right away. Since challenges do an MS reset, it'll be faster to do multiple completions at a time in the future.
-    - Now, reset for MS so you get 22. you will now keep Stone buyables, allowing you to focus on the newly unlocked Coal buyables. Remeber that you only KEEP them, so you'll still have to buy more when the cap increases.
+    - Now, reset for MS so you get over 20 and buy 'Another 10 Later'.
     - You start with 2 coal buyables. 'Autostone' is stronger early on, but focus 'Challenge Compressor' when grinding Milestones.
     - Go back to grinding MileStones and challenges until you can get coal upgrades in 1-2 resets. make sure to get some coal for buyables.
     - After 2 coal upgrades and 28 MileStones, get 20 'Unbuyable' completions and get 'New Processor Unit' and 'Permastone'. All you have to worry about in Stone is getting buyables when the cap goes up.
