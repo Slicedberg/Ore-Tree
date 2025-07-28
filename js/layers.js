@@ -1191,7 +1191,7 @@ addLayer("mile", {
             unlocked() {return hasUpgrade("coal", 25)},
         },
         12: {
-            title: "Another 10 Later",
+            title: "Back 2 Coal",
             description: "Unlock the 4th row of Coal Upgrades and Coal Buyables.",
             cost: new Decimal(20),
             unlocked() {return hasUpgrade("mile", 11)},
@@ -1199,7 +1199,7 @@ addLayer("mile", {
         13: {
             title: "Permastone",
             description: "Keep Stone upgrades on Coal and MileStone resets.",
-            cost: new Decimal(30),
+            cost: new Decimal(25),
             unlocked() {return hasUpgrade("mile", 12)},
         },
         14: {
@@ -1312,7 +1312,11 @@ addLayer("iron", {
     },
     milestones: {
     },
-    layerShown(){return (hasUpgrade('mile', 14))},
+        layerShown(){
+        let isUnlocked = false
+        if (hasUpgrade('mile', 14)){isUnlocked = true}
+        if (hasAchievement('a', 36)){isUnlocked = true}
+        return isUnlocked}
 })
 addLayer("lead", {
     name: "Lead", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -1353,5 +1357,9 @@ addLayer("lead", {
     },
     milestones: {
     },
-    layerShown(){return (hasUpgrade('mile', 14))},
+    layerShown(){
+        let isUnlocked = false
+        if (hasUpgrade('mile', 14)){isUnlocked = true}
+        if (hasAchievement('a', 36)){isUnlocked = true}
+        return isUnlocked}
 })

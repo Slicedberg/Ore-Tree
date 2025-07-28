@@ -42,7 +42,7 @@ CHAPTER 3: CHALLENGES (Unlocking Challenges -> Unlocking Lead/Iron)
     - Get WIWAWI (yes, that's what it's called) with 3-4 resets to remove all penalties. It's faster to get this right after IIWI IV and 7 challenge completions.
     - Get  18 MileStones and get all 10 completions of 'Anti-Upgrade' and 19 MileStones.
     - When you complete 'Anti-Upgrade', you'll unlock a new challenge, 'Unbuyable'. Get 8 completions right away. Since challenges do an MS reset, it'll be faster to do multiple completions at a time in the future.
-    - Now, reset for MS so you get over 20 and buy 'Another 10 Later'.
+    - Now, reset for MS so you get over 20 and buy 'Back 2 Coal'.
     - You start with 2 coal buyables. 'Autostone' is stronger early on, but focus 'Challenge Compressor' when grinding Milestones.
     - Go back to grinding MileStones and challenges until you can get coal upgrades in 1-2 resets. make sure to get some coal for buyables.
     - After 2 coal upgrades and 28 MileStones, get 20 'Unbuyable' completions and get 'New Processor Unit' and 'Permastone'. All you have to worry about in Stone is getting buyables when the cap goes up.

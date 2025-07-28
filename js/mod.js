@@ -88,7 +88,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-    return player.iron.points.gte(1) || player.lead.points.gte(1);
+	return false
 }
 
 
@@ -109,4 +109,5 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+
 }
