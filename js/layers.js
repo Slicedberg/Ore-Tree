@@ -70,7 +70,7 @@ addLayer("a", {
         },
         22: {
             name: "Oops, I Did it Again",
-            done() {return player.coal.points.gte(3)},
+            done() {return player.coal.points.gte(5)},
             unlocked() {return true},
             tooltip: "Reset for Coal a second time",
             onComplete() {}
@@ -1303,7 +1303,7 @@ addLayer("iron", {
     ],
     tabFormat: {
         "Main": {
-            content: ["main-display", "prestige-button", ["display-text", "This is your first big choice. Choosing Iron will increase the base requirement for Lead resets. The Iron layer is more open, focusing on expanding the first 3 layers and better boosts."], "blank", "upgrades", "buyables"]
+            content: ["main-display", "prestige-button", ["display-text", "[CURRENT ENDGAME] This is your first big choice. Choosing Iron will increase the base requirement for Lead resets. The Iron layer is more open, focusing on expanding the first 3 layers and better boosts."], "blank", "upgrades", "buyables"]
         },
     },
     upgrades:{
@@ -1348,7 +1348,7 @@ addLayer("lead", {
     ],
     tabFormat: {
         "Main": {
-            content: ["main-display", "prestige-button", ["display-text", "This is your first big choice. Choosing Lead will increase the base requirement for Iron resets. The Lead layer is more self contained, focusing on new content within Lead and QOL for the first 3 layers."], "blank", "upgrades", "buyables"]
+            content: ["main-display", "prestige-button", ["display-text", "[CURRENT ENDGAME] This is your first big choice. Choosing Lead will increase the base requirement for Iron resets. The Lead layer is more self contained, focusing on new content within Lead and QOL for the first 3 layers."], "blank", "upgrades", "buyables"]
         },
     },
     upgrades:{
